@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/ipv6Qt"/>
+    <qresource prefix="/icons">
+        <file>icons/xx.jpg</file>
+        <file>icons/icon.png</file>
+    </qresource>
+</RCC>
