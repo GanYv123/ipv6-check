@@ -1,12 +1,11 @@
-#include "ipv6qt.h"
-#include <QtWidgets/QApplication>
+#include "mainwidget.h"
 
+#include <QApplication>
 
 int main(int argc, char *argv[])
 {
-    QTextStream out(stdout);
     QApplication a(argc, argv);
-    ipv6Qt w;
+    MainWidget w;
     w.show();
     return a.exec();
 }
