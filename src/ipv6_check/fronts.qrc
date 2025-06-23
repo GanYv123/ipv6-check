@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/JetBrainsMono-Bold.ttf</file>
+        <file>fonts/AlibabaPuHuiTi-3-115-Black.ttf</file>
+    </qresource>
+</RCC>

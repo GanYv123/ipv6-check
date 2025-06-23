@@ -5,28 +5,29 @@
 NetworkInterfaceModel::NetworkInterfaceModel(QObject *parent)
     : QStandardItemModel(parent)
 {
-    // 设置两列标题
-    setHorizontalHeaderLabels({ tr("属性"), tr("值") });
+
+    setHorizontalHeaderLabels({ tr("网络信息") });
 }
 
 void NetworkInterfaceModel::loadInterfaces()
 {
     clear();
-    setHorizontalHeaderLabels({ tr("属性"), tr("值") });
+    setHorizontalHeaderLabels({ tr("网络信息") }); // 同样只设置一列标题
 
     const auto &nics = NetworkInterfaceManager::instance().interfaces();
     for (const auto &nic : nics)
         appendInterface(nic);
 }
 
+
 void NetworkInterfaceModel::appendInterface(const NetworkInterface &nic)
 {
     // 根节点
     auto *root = new QStandardItem(QString::fromStdString(nic.name));
-    appendRow({ root, new QStandardItem() });
+    appendRow(root);
 
     auto addProp = [&](const QString &k, const QString &v){
-        root->appendRow({ new QStandardItem(k), new QStandardItem(v) });
+        root->appendRow(new QStandardItem(k + ": " + v));
     };
 
     addProp(tr("描述"),    QString::fromStdString(nic.description));
@@ -38,15 +39,14 @@ void NetworkInterfaceModel::appendInterface(const NetworkInterface &nic)
     appendAddressList(root, "IPv4 地址", nic.ipv4Addresses, {});
     appendAddressList(root, "IPv6 地址", {}, nic.ipv6Addresses);
 
-    // 链路速率
     auto *speedRoot = new QStandardItem(tr("链路速率"));
-    root->appendRow({ speedRoot, new QStandardItem() });
-    QString rx = QString::number(nic.speed.rx_bps/1e6) + " Mbps";
-    QString tx = QString::number(nic.speed.tx_bps/1e6) + " Mbps";
-    speedRoot->appendRow({ new QStandardItem(tr("接收")), new QStandardItem(rx) });
-    speedRoot->appendRow({ new QStandardItem(tr("发送")), new QStandardItem(tx) });
-    speedRoot->appendRow({ new QStandardItem(tr("双工")), new QStandardItem(QString::fromStdString(nic.speed.duplex)) });
+    root->appendRow(speedRoot);
+
+    speedRoot->appendRow(new QStandardItem(tr("接收: ") + QString::number(nic.speed.rx_bps / 1e6) + " Mbps"));
+    speedRoot->appendRow(new QStandardItem(tr("发送: ") + QString::number(nic.speed.tx_bps / 1e6) + " Mbps"));
+    speedRoot->appendRow(new QStandardItem(tr("双工: ") + QString::fromStdString(nic.speed.duplex)));
 }
+
 
 void NetworkInterfaceModel::appendAddressList(QStandardItem *parent,
                                               const char *title,
@@ -56,16 +56,17 @@ void NetworkInterfaceModel::appendAddressList(QStandardItem *parent,
     if (v4.empty() && v6.empty()) return;
 
     auto *addrRoot = new QStandardItem(tr(title));
-    parent->appendRow({ addrRoot, new QStandardItem() });
+    parent->appendRow(addrRoot);
 
     for (const auto &a : v4) {
-        QString s = QString::fromStdString(a.address) + "/" + QString::fromStdString(a.netmask)
-        + (a.isPrimary ? tr(" (主)") : "");
-        addrRoot->appendRow({ new QStandardItem(s), new QStandardItem() });
+        QString s = QString::fromStdString(a.address) + "/" + QString::fromStdString(a.netmask);
+        if (a.isPrimary) s += tr(" (主)");
+        addrRoot->appendRow(new QStandardItem(s));
     }
+
     for (const auto &a : v6) {
-        QString s = QString::fromStdString(a.address) + "/" + QString::fromStdString(a.prefixLength)
-        + (a.isPrimary ? tr(" (主)") : "");
-        addrRoot->appendRow({ new QStandardItem(s), new QStandardItem() });
+        QString s = QString::fromStdString(a.address) + "/" + QString::fromStdString(a.prefixLength);
+        if (a.isPrimary) s += tr(" (主)");
+        addrRoot->appendRow(new QStandardItem(s));
     }
 }

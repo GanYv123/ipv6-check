@@ -15,7 +15,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 set(PROJECT_SOURCES
         main.cpp
         mainwidget.cpp mainwidget.h
-        mainwidget.ui
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -26,6 +26,11 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         networkinterfacemanager.h networkinterfacemanager.cpp
         networkinterfacemodel.h networkinterfacemodel.cpp
         networkinterfacemodel.h networkinterfacemodel.cpp
+        fronts.qrc
+        include/ElaWidgetTools.qrc
+        ModelView/T_TreeItem.cpp ModelView/T_TreeItem.h ModelView/T_TreeViewModel.cpp ModelView/T_TreeViewModel.h
+
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET ipv6_check APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -45,7 +50,12 @@ else()
     endif()
 endif()
 
-target_link_libraries(ipv6_check PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network)
+include_directories(include)
+
+target_link_libraries(ipv6_check PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+  Qt${QT_VERSION_MAJOR}::Network
+  ${CMAKE_CURRENT_SOURCE_DIR}/lib/elawidgettools.lib
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
