@@ -1,44 +1,42 @@
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
-#include <QWidget>
-#include "NetworkInfo.h"
-#include "networkinterfacemodel.h"
 #include "ElaWidget.h"
-#include "ElaTreeView.h"
-#include "QGridLayout.h"
-#include "ElaPushButton.h"
-#include "ModelView/T_TreeViewModel.h"
+#include <QStackedWidget>
+#include <QSplitter>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QCloseEvent>
+
+class NetworkInterfacePage;
 
 class MainWidget : public ElaWidget
 {
     Q_OBJECT
 
 public:
-    MainWidget(ElaWidget *parent = nullptr);
+    explicit MainWidget(ElaWidget *parent = nullptr);
     ~MainWidget();
 
-public:
-    void initConnect();
-    void initUI();
-
-private slots:
-    void on_pb_initNetWorkeInterface_clicked();
+protected:
+    void closeEvent(QCloseEvent *event) override;
 
 private:
-    // 网卡信息
-    QHash<QString,NetworkInterface> m_map_networkInterfaceInfo;
-
-    // viewtree 中的模型
-    NetworkInterfaceModel *m_netModel{nullptr};
-
-    ElaTreeView *m_treeview{nullptr};
-    // 布局
-    QGridLayout *m_mainGridLayout{nullptr};
-
-    // 控制按钮
-    ElaPushButton* m_pb_initNetWorkeInterface{nullptr};  // 初始化网卡信息
-
+    void initUI();
+    void initConnect();
     void initMainWidgetResolution();
+
+private:
+    // 主界面控件
+    QWidget *m_leftMenuWidget{nullptr};
+    QStackedWidget *m_stackedWidget{nullptr};
+    QPushButton *m_btnNetwork{nullptr};
+    QPushButton *m_btnSettings{nullptr};
+
+    // 页面
+    NetworkInterfacePage *m_networkPage{nullptr};
+    QWidget *m_settingsPage{nullptr};
 };
+
 #endif // MAINWIDGET_H

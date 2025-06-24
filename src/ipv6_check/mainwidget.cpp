@@ -1,71 +1,110 @@
-#include "mainwidget.h"
-#include "networkinterfacemanager.h"
-#include "QStandardItemModel"
-#include "QHeaderView"
-#include "ElaMessageButton.h"
-#include <QGuiApplication>
+#include "mainWidget.h"
+#include "networkInterfacePage.h"
+#include "ElaContentDialog.h"
+
+#include <QApplication>
 #include <QScreen>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QSplitter>
 
 MainWidget::MainWidget(ElaWidget *parent)
     : ElaWidget(parent)
-    , m_netModel(new NetworkInterfaceModel(this))
-    , m_treeview(new ElaTreeView(this))
 {
+    setWindowTitle("网卡监视工具");
     initMainWidgetResolution();
     initUI();
     initConnect();
 }
 
-MainWidget::~MainWidget()
-{
+MainWidget::~MainWidget() = default;
 
+void MainWidget::initUI()
+{
+    auto *mainLayout = new QGridLayout(this);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    this->setLayout(mainLayout);
+
+    // 左侧菜单栏
+    m_leftMenuWidget = new QWidget(this);
+    auto *menuLayout = new QVBoxLayout(m_leftMenuWidget);
+    menuLayout->setContentsMargins(10, 10, 10, 10);
+    menuLayout->setSpacing(10);
+
+    m_btnNetwork = new QPushButton("网络信息", this);
+    m_btnSettings = new QPushButton("设置页面", this);
+
+    menuLayout->addWidget(m_btnNetwork);
+    menuLayout->addWidget(m_btnSettings);
+    menuLayout->addStretch();
+
+    // 右侧页面区（堆叠）
+    m_stackedWidget = new QStackedWidget(this);
+    m_networkPage = new NetworkInterfacePage(this);
+    m_settingsPage = new QWidget(this);
+    m_settingsPage->setLayout(new QVBoxLayout); // 占位
+
+    m_stackedWidget->addWidget(m_networkPage);
+    m_stackedWidget->addWidget(m_settingsPage);
+
+    // 使用分割器分隔左侧和右侧
+    auto *splitter = new QSplitter(Qt::Horizontal, this);
+    splitter->addWidget(m_leftMenuWidget);
+    splitter->addWidget(m_stackedWidget);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 4);
+
+    mainLayout->addWidget(splitter);
 }
 
 void MainWidget::initConnect()
 {
-    connect(m_pb_initNetWorkeInterface,&ElaPushButton::clicked
-            ,this,&MainWidget::on_pb_initNetWorkeInterface_clicked);
-}
+    connect(m_btnNetwork, &QPushButton::clicked, this, [=]() {
+        m_stackedWidget->setCurrentWidget(m_networkPage);
+    });
 
-void MainWidget::initUI()
-{
-    m_pb_initNetWorkeInterface = new ElaPushButton("初始化");
-
-    m_treeview->setModel(m_netModel);
-    m_mainGridLayout = new QGridLayout(this);
-    m_mainGridLayout->addWidget(m_treeview,0,0);
-
-    m_mainGridLayout->setContentsMargins(0,0,0,0);
-    this->setLayout(m_mainGridLayout);
-    m_mainGridLayout->addWidget(m_pb_initNetWorkeInterface,1,0);
-    // 调整treeview自适应列宽
-    m_treeview->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_treeview->setIndentation(30);
-
-}
-
-void MainWidget::on_pb_initNetWorkeInterface_clicked()
-{
-    NetworkInterfaceManager::instance().refreshInterfaces();
-    m_netModel->loadInterfaces();
+    connect(m_btnSettings, &QPushButton::clicked, this, [=]() {
+        m_stackedWidget->setCurrentWidget(m_settingsPage);
+    });
 }
 
 void MainWidget::initMainWidgetResolution()
 {
-    // 获取主屏幕分辨率
     QScreen *screen = QGuiApplication::primaryScreen();
     QRect screenGeometry = screen->geometry();
     int screenWidth = screenGeometry.width();
     int screenHeight = screenGeometry.height();
 
-    // 计算窗口尺寸（比如设置为屏幕的 70% 大小）
-    int windowWidth = static_cast<int>(screenWidth * 0.7);
-    int windowHeight = static_cast<int>(screenHeight * 0.7);
+    constexpr float resolution = 0.6;
+    int windowWidth = static_cast<int>(screenWidth * resolution);
+    int windowHeight = static_cast<int>(screenHeight * resolution);
 
-    // 设置窗口大小
     resize(windowWidth, windowHeight);
-
-    // 可选：居中显示
     move((screenWidth - windowWidth) / 2, (screenHeight - windowHeight) / 2);
 }
 
+void MainWidget::closeEvent(QCloseEvent *event)
+{
+    event->ignore(); // 默认不关闭
+
+    auto *dialog = new ElaContentDialog(this);
+    dialog->setLeftButtonText("取消");
+    dialog->setMiddleButtonText("最小化");
+    dialog->setRightButtonText("退出");
+
+    connect(dialog, &ElaContentDialog::leftButtonClicked, this, [=]() {
+        dialog->close();
+    });
+
+    connect(dialog, &ElaContentDialog::middleButtonClicked, this, [=]() {
+        dialog->close();
+        this->showMinimized();
+    });
+
+    connect(dialog, &ElaContentDialog::rightButtonClicked, this, [=]() {
+        dialog->close();
+        this->deleteLater(); // 或 qApp->quit();
+    });
+
+    dialog->show(); // 非模态对话框
+}
