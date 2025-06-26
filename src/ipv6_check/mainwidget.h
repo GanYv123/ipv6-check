@@ -2,10 +2,9 @@
 #define MAINWIDGET_H
 
 #include "ElaWidget.h"
+#include "SideMenuWidget.h"
+
 #include <QStackedWidget>
-#include <QSplitter>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QGridLayout>
 #include <QCloseEvent>
 
@@ -28,11 +27,11 @@ private:
     void initMainWidgetResolution();
 
 private:
-    // 主界面控件
-    QWidget *m_leftMenuWidget{nullptr};
+    // 左侧菜单栏
+    SideMenuWidget *m_sideMenu{nullptr};
+
+    // 页面容器
     QStackedWidget *m_stackedWidget{nullptr};
-    QPushButton *m_btnNetwork{nullptr};
-    QPushButton *m_btnSettings{nullptr};
 
     // 页面
     NetworkInterfacePage *m_networkPage{nullptr};

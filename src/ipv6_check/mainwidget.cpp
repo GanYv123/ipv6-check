@@ -1,12 +1,12 @@
-#include "mainWidget.h"
+#include "MainWidget.h"
 #include "networkInterfacePage.h"
 #include "ElaContentDialog.h"
+#include "ElaText.h"
 
 #include <QApplication>
 #include <QScreen>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QSplitter>
+#include <QVBoxLayout>
 
 MainWidget::MainWidget(ElaWidget *parent)
     : ElaWidget(parent)
@@ -25,45 +25,49 @@ void MainWidget::initUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     this->setLayout(mainLayout);
 
-    // 左侧菜单栏
-    m_leftMenuWidget = new QWidget(this);
-    auto *menuLayout = new QVBoxLayout(m_leftMenuWidget);
-    menuLayout->setContentsMargins(10, 10, 10, 10);
-    menuLayout->setSpacing(10);
+    // 左侧菜单栏（封装类）
+    m_sideMenu = new SideMenuWidget(this);
 
-    m_btnNetwork = new QPushButton("网络信息", this);
-    m_btnSettings = new QPushButton("设置页面", this);
-
-    menuLayout->addWidget(m_btnNetwork);
-    menuLayout->addWidget(m_btnSettings);
-    menuLayout->addStretch();
-
-    // 右侧页面区（堆叠）
+    // 右侧页面区
     m_stackedWidget = new QStackedWidget(this);
     m_networkPage = new NetworkInterfacePage(this);
+
     m_settingsPage = new QWidget(this);
-    m_settingsPage->setLayout(new QVBoxLayout); // 占位
+    auto *text = new ElaText("设置界面", this);
+    auto *layout = new QVBoxLayout(m_settingsPage);
+    layout->addWidget(text);
+    m_settingsPage->setLayout(layout);
 
     m_stackedWidget->addWidget(m_networkPage);
     m_stackedWidget->addWidget(m_settingsPage);
 
-    // 使用分割器分隔左侧和右侧
+    // 分割器
     auto *splitter = new QSplitter(Qt::Horizontal, this);
-    splitter->addWidget(m_leftMenuWidget);
+    splitter->addWidget(m_sideMenu);
     splitter->addWidget(m_stackedWidget);
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 4);
+
+    splitter->setStyleSheet(R"(
+    QSplitter::handle {
+        background-color: #c0c0c0;
+    }
+    QSplitter::handle:hover {
+        background-color: #a0a0a0;
+    }
+)");
+    splitter->setHandleWidth(4);
 
     mainLayout->addWidget(splitter);
 }
 
 void MainWidget::initConnect()
 {
-    connect(m_btnNetwork, &QPushButton::clicked, this, [=]() {
+    connect(m_sideMenu->networkButton(), &QPushButton::clicked, this, [=]() {
         m_stackedWidget->setCurrentWidget(m_networkPage);
     });
 
-    connect(m_btnSettings, &QPushButton::clicked, this, [=]() {
+    connect(m_sideMenu->settingsButton(), &QPushButton::clicked, this, [=]() {
         m_stackedWidget->setCurrentWidget(m_settingsPage);
     });
 }

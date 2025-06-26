@@ -13,6 +13,7 @@ NetworkInterfacePage::NetworkInterfacePage(QWidget *parent)
     m_treeView(new ElaTreeView(this)),
     m_initButton(new ElaPushButton("初始化", this))
 {
+    setTitleVisible(false);
     setupCustomWidget();
     setupCentralWidget();
     setupConnections();
