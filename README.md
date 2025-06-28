@@ -20,6 +20,8 @@
 - Qt 5 或 Qt 6（推荐 Qt 6.2+）
 - CMake ≥ 3.16
 - C++17 编译器（GCC / Clang / MSVC）
+- 本仓库项目采用 MSVC 2022 构建
+- 建议使用release版本
 
 ## 构建方法
 
@@ -29,3 +31,10 @@ cd ipv6-check
 mkdir build && cd build
 cmake ..
 cmake --build .
+
+```
+
+> [!WARNING]
+>
+> 若提示缺失 **ElaWidgetTools.dll** 可从 **./src/ipv6_check/lib** 文件夹中获取
+

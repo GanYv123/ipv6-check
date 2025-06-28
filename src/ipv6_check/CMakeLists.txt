@@ -28,9 +28,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         networkinterfacemodel.h networkinterfacemodel.cpp
         fronts.qrc
         include/ElaWidgetTools.qrc
-        ModelView/T_TreeItem.cpp ModelView/T_TreeItem.h ModelView/T_TreeViewModel.cpp ModelView/T_TreeViewModel.h
+
         networkinterfacepage.h networkinterfacepage.cpp
         sidemenuwidget.h sidemenuwidget.cpp
+        mainwindow.h mainwindow.cpp
 
 
     )

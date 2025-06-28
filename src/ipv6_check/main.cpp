@@ -1,7 +1,7 @@
 #include "mainwidget.h"
+#include "mainwindow.h"
 #include "ElaApplication.h"
 #include <QApplication>
-#include "ElaWidget.h"
 
 #ifdef Q_OS_WIN
 #include <Windows.h>
@@ -22,8 +22,13 @@ int main(int argc, char *argv[])
 #endif
     QApplication a(argc, argv);
     eApp->init();
+
     MainWidget w;
     w.show();
+
+    MainWindow w1;
+    w1.show();
+
 // #ifdef Q_OS_WIN
 //     // 防截屏
 //    HWND handle = FindWindowA(NULL, "ElaWidget");
