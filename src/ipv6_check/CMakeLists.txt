@@ -13,59 +13,53 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwidget.cpp mainwidget.h
-
+    src/main.cpp
+    src/ui/mainwidget.cpp
+    src/ui/mainwindow.cpp
+    src/ui/networkinterfacepage.cpp
+    src/ui/sidemenuwidget.cpp
+    src/network/networkinterfacemanager.cpp
+    src/network/networkinterfacemodel.cpp
+    include/app/ui/mainwidget.h
+    include/app/ui/mainwindow.h
+    include/app/ui/networkinterfacepage.h
+    include/app/ui/sidemenuwidget.h
+    include/app/network/NetworkInfo.h
+    include/app/network/networkinterfacemanager.h
+    include/app/network/networkinterfacemodel.h
+    fronts.qrc
+    include/ElaWidgetTools.qrc
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
     qt_add_executable(ipv6_check
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        NetworkInfo.h
-        networkinterfacemanager.h networkinterfacemanager.cpp
-        networkinterfacemodel.h networkinterfacemodel.cpp
-        networkinterfacemodel.h networkinterfacemodel.cpp
-        fronts.qrc
-        include/ElaWidgetTools.qrc
-
-        networkinterfacepage.h networkinterfacepage.cpp
-        sidemenuwidget.h sidemenuwidget.cpp
-        mainwindow.h mainwindow.cpp
-
-
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET ipv6_check APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
     if(ANDROID)
-        add_library(ipv6_check SHARED
-            ${PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+        add_library(ipv6_check SHARED ${PROJECT_SOURCES})
     else()
-        add_executable(ipv6_check
-            ${PROJECT_SOURCES}
-        )
+        add_executable(ipv6_check ${PROJECT_SOURCES})
     endif()
 endif()
 
-include_directories(include)
-
-target_link_libraries(ipv6_check PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
-  Qt${QT_VERSION_MAJOR}::Network
-  ${CMAKE_CURRENT_SOURCE_DIR}/lib/elawidgettools.lib
+target_include_directories(ipv6_check PRIVATE
+    include
+    include/app/ui
+    include/app/network
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
+target_link_libraries(ipv6_check PRIVATE
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Qt${QT_VERSION_MAJOR}::Network
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/ElaWidgetTools.lib
+)
+
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.ipv6_check)
+    set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.ipv6_check)
 endif()
+
 set_target_properties(ipv6_check PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
