@@ -24,12 +24,16 @@
 ├── demo/                     # 文档与示例
 └── src/
     └── ipv6_check/
-        ├── CMakeLists.txt    # 应用构建脚本
-        ├── *.cpp / *.h       # 核心业务代码
-        ├── include/          # ElaWidgetTools 头文件和资源
-        ├── fonts/            # 字体资源
-        └── lib/              # 三方库文件
-```
+        ├── CMakeLists.txt        # 应用构建脚本
+        ├── src/                  # 业务实现代码
+        │   ├── main.cpp
+        │   ├── ui/
+        │   └── network/
+        ├── include/
+        │   ├── app/              # 项目头文件（ui/network）
+        │   └── ...               # ElaWidgetTools 头文件和资源
+        ├── fonts/                # 字体资源
+        └── lib/                  # 三方库文件
 
 ## 构建要求
 

@@ -13,20 +13,20 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 set(PROJECT_SOURCES
-    main.cpp
-    mainwidget.cpp
-    mainwidget.h
-    mainwindow.cpp
-    mainwindow.h
-    networkinterfacepage.cpp
-    networkinterfacepage.h
-    networkinterfacemanager.cpp
-    networkinterfacemanager.h
-    networkinterfacemodel.cpp
-    networkinterfacemodel.h
-    sidemenuwidget.cpp
-    sidemenuwidget.h
-    NetworkInfo.h
+    src/main.cpp
+    src/ui/mainwidget.cpp
+    src/ui/mainwindow.cpp
+    src/ui/networkinterfacepage.cpp
+    src/ui/sidemenuwidget.cpp
+    src/network/networkinterfacemanager.cpp
+    src/network/networkinterfacemodel.cpp
+    include/app/ui/mainwidget.h
+    include/app/ui/mainwindow.h
+    include/app/ui/networkinterfacepage.h
+    include/app/ui/sidemenuwidget.h
+    include/app/network/NetworkInfo.h
+    include/app/network/networkinterfacemanager.h
+    include/app/network/networkinterfacemodel.h
     fronts.qrc
     include/ElaWidgetTools.qrc
 )
@@ -44,7 +44,11 @@ else()
     endif()
 endif()
 
-target_include_directories(ipv6_check PRIVATE include)
+target_include_directories(ipv6_check PRIVATE
+    include
+    include/app/ui
+    include/app/network
+)
 
 target_link_libraries(ipv6_check PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
