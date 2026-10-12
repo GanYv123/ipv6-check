@@ -34,6 +34,7 @@
         │   └── ...               # ElaWidgetTools 头文件和资源
         ├── fonts/                # 字体资源
         └── lib/                  # 三方库文件
+```
 
 ## 构建要求
 
@@ -41,16 +42,20 @@
 - CMake ≥ 3.16
 - C++17 编译器（GCC / Clang / MSVC）
 - 本仓库项目采用 MSVC 2022 构建
+- Qt Widgets、Network 模块；仓库中的 `ElaWidgetTools.lib` 需与所选 Qt 版本、编译器和架构匹配
+- 当前构建脚本直接链接 Windows `.lib` 文件，其他平台需要自行调整第三方库配置
 - 建议使用 Release 版本
 
 ## 构建方法
 
 ```bash
-git clone https://github.com/your_username/ipv6-check.git
+git clone https://github.com/GanYv123/ipv6-check.git
 cd ipv6-check
 cmake -S . -B build
 cmake --build build --config Release
 ```
+
+也可以在 Qt Creator 中打开根目录的 `CMakeLists.txt`，选择匹配的 Qt / MSVC Kit 后构建运行。使用命令行时，请先设置 Qt 的 CMake 搜索路径，例如通过 `CMAKE_PREFIX_PATH` 指向本机 Qt 安装目录。
 
 > [!WARNING]
 >
